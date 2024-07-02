@@ -4,13 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/stylesheets/output.css" rel="stylesheet" />
-
-    <title>Document</title>
+    <title>Smart Laundry - Layanan Laundry Pintar</title>
 </head>
-<body>
+<body class="bg-blue-50 text-blue-900 flex flex-col min-h-screen">
     <%- include('navbar') %>
-  <h1>Landing Page</h1>
+    
+    <!-- Hero Section -->
+    <section class="bg-blue-600 text-white">
+        <div class="container mx-auto px-4 py-24 text-center">
+            <h1 class="text-5xl font-bold mb-6">Smart Laundry</h1>
+            <p class="text-xl mb-10">Solusi laundry pintar untuk pakaian bersih dan wangi</p>
+            <a href="#layanan" class="bg-white text-blue-600 font-bold py-3 px-8 rounded-full hover:bg-blue-100 transition duration-300">Lihat Layanan</a>
+        </div>
+    </section>
 
-      <script src="/node_modules/flowbite/dist/flowbite.min.js"></script>
+    <!-- Layanan Section -->
+    <section id="layanan" class="py-20">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Layanan Kami</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <% layanans.forEach(layanan => { %>
+                <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition duration-300">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-600"><%= layanan.nama %></h3>
+                    <p class="mb-4"><%= layanan.deskripsi %></p>
+                    <p class="text-lg font-bold mb-8">Mulai dari Rp <%= layanan.harga %>/kg</p>
+                    <a href="/layanan/<%= layanan.id %>" class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-300">Pesan Sekarang</a>
+                </div>
+                <% }) %>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mengapa Memilih Kami Section -->
+    <section class="bg-blue-100 py-20">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Mengapa Memilih Kami?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <h3 class="text-xl font-semibold mb-2 text-blue-600">Teknologi Modern</h3>
+                    <p>Menggunakan peralatan dan teknologi terkini untuk hasil terbaik.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <h3 class="text-xl font-semibold mb-2 text-blue-600">Cepat & Efisien</h3>
+                    <p>Layanan cepat dengan kualitas terjamin untuk menghemat waktu Anda.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <h3 class="text-xl font-semibold mb-2 text-blue-600">Pelayanan Ramah</h3>
+                    <p>Tim kami siap memberikan pelayanan terbaik dengan senyuman.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <h3 class="text-xl font-semibold mb-2 text-blue-600">Harga Terjangkau</h3>
+                    <p>Kualitas premium dengan harga yang bersahabat untuk semua kalangan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Promo Section -->
+    <section class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="bg-blue-600 p-8 rounded-lg shadow-md text-center text-white">
+                <h2 class="text-3xl font-bold mb-4">Promo Spesial</h2>
+                <h3 class="text-2xl font-semibold mb-4">Diskon 20% untuk Pelanggan Baru</h3>
+                <p class="mb-6">Dapatkan diskon 20% untuk pesanan pertama Anda. Gunakan kode: SMART20</p>
+                <a href="#" class="bg-white text-blue-600 font-bold py-3 px-8 rounded-full hover:bg-blue-100 transition duration-300">Pesan Sekarang</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tentang Kami Section -->
+    <section class="bg-blue-100 py-20">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">Tentang Smart Laundry</h2>
+            <p class="text-lg text-center max-w-3xl mx-auto">
+                Smart Laundry adalah layanan laundry modern yang menggunakan teknologi terkini untuk memberikan hasil terbaik. Kami berkomitmen untuk memberikan layanan berkualitas tinggi dengan harga terjangkau.
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <%- include('footer') %>
+ 
+    <script src="/node_modules/flowbite/dist/flowbite.min.js"></script>
 </body>
 </html>
