@@ -7,6 +7,7 @@ const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 var userRouter = require('./routes/user');
 var authRouter = require('./routes/auth');
+var adminRouter = require('./routes/admin');
 const {User, sequelize } = require('./models');
 
 
@@ -39,7 +40,7 @@ app.use('/node_modules', express.static(path.join(__dirname, 'node_modules')));
 
 app.use('/', userRouter);
 app.use('/auth', authRouter);
-
+app.use('/admin', adminRouter);
 
 
 // catch 404 and forward to error handler
