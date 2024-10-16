@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilih Lokasi di Kota Padang</title>
+    <link href="/stylesheets/output.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map { height: calc(100vh - 2rem); }
+        @media (min-width: 768px) {
+            .grid-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+            #map { height: calc(100vh - 4rem); } /* Adjust as needed */
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+ 
+    <div class="container mx-auto p-4 grid-container">
+        <div id="map" class="mb-4 rounded-lg shadow-md"></div>
+        <form id="locationForm" class="bg-white p-4 rounded-lg shadow-md">
+            <h1 class="text-2xl font-bold mb-4">Pilih Alamat</h1>
+            <div class="mb-4">
+                <label for="streetName" class="block mb-2 text-sm font-medium text-gray-900">Nama Jalan:</label>
+                <input type="text" id="streetName" name="streetName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+            </div>
+            <div class="mb-4">
+                <label for="address" class="block mb-2 text-sm font-medium text-gray-900">Alamat Lengkap:</label>
+                <input type="text" id="address" name="address" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+            </div>
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
+            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" disabled>Tambah</button>
+        </form>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="/node_modules/flowbite/dist/flowbite.min.js"></script>
+    <script>
+        const centerLat = -0.9150163600093115;
+        const centerLon = 100.35361407841286;
+        const maxDistance = 3000; // 5 km in meters
+
+        const map = L.map('map', {
+            center: [centerLat, centerLon],
+            zoom: 14,
+            minZoom: 13,
+            maxZoom: 18
+        });
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        let marker;
+
+        map.on('click', function(e) {
+            const distance = map.distance(e.latlng, [centerLat, centerLon]);
+            if (distance <= maxDistance) {
+                if (marker) {
+                    marker.setLatLng(e.latlng);
+                } else {
+                    marker = L.marker(e.latlng).addTo(map);
+                }
+                getAddress(e.latlng.lat, e.latlng.lng);
+            } else {
+                alert('Mohon pilih lokasi dalam radius 3 km dari pusat area yang ditentukan.');
+            }
+        });
+
+        function getAddress(latitude, longitude) {
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&addressdetails=1`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Data dari OpenStreetMap:", data);
+                    const { address } = data;
+
+                    let streetName = '';
+                    let fullAddress = '';
+
+                    if (address.road) streetName = address.road;
+                    if (address.house_number) {
+                        if (streetName) streetName += ' ' + address.house_number;
+                        else streetName = address.house_number;
+                    }
+
+                    if (address.hamlet) fullAddress += ' ' + address.hamlet;
+                    if (address.village) fullAddress += ' ' + address.village;
+                    if (address.suburb) fullAddress += ', ' + address.suburb;
+                    if (address.town) fullAddress += ', ' + address.town;
+                    if (address.city_district) fullAddress += ', ' + address.city_district;
+                    if (address.city) fullAddress += ', ' + address.city;
+                    if (address.state_district) fullAddress += ', ' + address.state_district;
+                    if (address.state) fullAddress += ', ' + address.state;
+                    if (address.postcode) fullAddress += ', ' + address.postcode;
+
+                    if (fullAddress === '') {
+                        if (data.display_name) fullAddress = data.display_name;
+                        else if (data.name) fullAddress = data.name;
+                    }
+
+                    if (fullAddress.split(',').length <= 2) {
+                        fullAddress += ` (${latitude.toFixed(6)}, ${longitude.toFixed(6)})`;
+                    }
+
+                    if (fullAddress.toLowerCase().includes('padang')) {
+                        document.getElementById('streetName').value = streetName.trim();
+                        document.getElementById('address').value = fullAddress.trim();
+                        document.getElementById('latitude').value = latitude;
+                        document.getElementById('longitude').value = longitude;
+                        checkFormValidity();
+                    } else {
+                        alert('Mohon pilih lokasi di Kota Padang.');
+                        document.getElementById('streetName').value = '';
+                        document.getElementById('address').value = '';
+                        document.getElementById('latitude').value = '';
+                        document.getElementById('longitude').value = '';
+                        checkFormValidity();
+                     
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Gagal mendapatkan alamat');
+                });
+        }
+
+        function checkFormValidity() {
+            const streetName = document.getElementById('streetName').value;
+            const address = document.getElementById('address').value;
+            const latitude = document.getElementById('latitude').value;
+            const longitude = document.getElementById('longitude').value;
+            const submitButton = document.querySelector('button[type="submit"]');
+
+            submitButton.disabled = !(streetName && address && latitude && longitude);
+        }
+
+        document.getElementById('streetName').addEventListener('input', checkFormValidity);
+        document.getElementById('address').addEventListener('input', checkFormValidity);
+
+        document.getElementById('locationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const streetName = document.getElementById('streetName').value;
+            const address = document.getElementById('address').value;
+            const latitude = document.getElementById('latitude').value;
+            const longitude = document.getElementById('longitude').value;
+
+            // Menggabungkan nama jalan dan alamat lengkap
+            const combinedAddress = `${streetName}, ${address}`;
+
+            const formDataJSON = {
+                address: combinedAddress,
+                latitude: latitude,
+                longitude: longitude
+            };
+
+            fetch('/save-location', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formDataJSON),
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Lokasi berhasil disimpan');
+                    document.getElementById('streetName').value = '';
+                    document.getElementById('address').value = '';
+                    document.getElementById('latitude').value = '';
+                    document.getElementById('longitude').value = '';
+                    if (marker) {
+                        marker.remove();
+                        marker = null;
+                    }
+                    checkFormValidity();
+                    window.location.href = '/profile';
+                } else {
+                    alert('Gagal menyimpan lokasi');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan');
+            });
+        });
+
+        
+    </script>
+</body>
+</html>

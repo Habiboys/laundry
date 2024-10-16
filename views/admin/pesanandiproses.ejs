@@ -1,0 +1,86 @@
+<%- include('header') %>
+
+<div class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
+    <div class="container mx-auto px-6 py-8">
+        <h3 class="text-gray-700 text-3xl font-medium mb-4"><%= title %></h3>
+        <div class="mt-4">
+            <div class="flex flex-wrap -mx-6">
+                <div class="w-full px-6 py-4">
+                    <div class="bg-white shadow-lg rounded-lg p-4">
+                        <table class="min-w-full bg-white border border-gray-300">
+                            <thead>
+                                <tr>
+                                    <th class="py-2 px-4 border-b text-gray-700">Order ID</th>
+                                    <th class="py-2 px-4 border-b text-gray-700">Layanan</th>
+                                    <th class="py-2 px-4 border-b text-gray-700">Pelanggan</th>
+                                    <th class="py-2 px-4 border-b text-gray-700">No HP</th>
+                                    <th class="py-2 px-4 border-b text-gray-700">Alamat</th>
+                                    <th class="py-2 px-4 border-b text-gray-700">Berat Pakaian</th>
+                                    <th class="py-2 px-4 border-b text-gray-700">Status Bayar</th>
+                                    <th class="py-2 px-4 border-b text-gray-700">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% order.forEach(item => { %>
+                                    <tr>
+                                        <td class="py-2 px-4 border-b text-gray-700"><%= item.id %></td>
+                                        <td class="py-2 px-4 border-b text-gray-700"><%= item.Layanan.nama %></td>
+                                        <td class="py-2 px-4 border-b text-gray-700"><%= item.User.username %></td>
+                                        <td class="py-2 px-4 border-b text-gray-700"><%= item.User.hp %></td>
+                                        <td class="py-2 px-4 border-b text-gray-700"><%= item.Alamat.alamat %></td>
+                                        <td class="py-2 px-4 border-b text-gray-700"><%= item.berat %> kg</td>
+                                        <td class="py-2 px-4 border-b text-gray-700"><%= item.bayar %></td>
+                                        <td class="py-2 px-4 border-b text-gray-700">
+                                            <% if (item.status === 'dikonfirmasi') { %>
+                                                <button data-modal-target="modalProses-<%= item.id %>" data-modal-toggle="modalProses-<%= item.id %>" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">Proses</button>
+                                       
+                                            <% } else if (item.status === 'diproses') { %>
+                                                <form action="/admin/proses-selesai/<%= item.id %>" method="POST" class="inline-block">
+                                                    <% if (item.bayar === "belum") { %>
+                                                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700" disabled>Selesai</button>
+                                                    <% } else { %>
+                                                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Selesai</button>
+                                                    <% } %>
+                                                </form>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% order.forEach(item => { %>
+    <% if (item.status === 'dikonfirmasi') { %>
+        <!-- Modal Proses -->
+        <div id="modalProses-<%= item.id %>" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full">
+            <div class="relative p-4 w-full max-w-md h-full md:h-auto">
+                <div class="relative bg-white rounded-lg shadow">
+                    <div class="flex justify-end p-2">
+                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" data-modal-toggle="modalProses-<%= item.id %>">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                    </div>
+                    <form action="/admin/tambah-berat/<%= item.id %>" method="POST" class="p-6">
+                        <h3 class="text-lg font-medium text-gray-900">Masukan Berat Pakaian</h3>
+                        <div class="mt-2">
+                            <label for="beratPakaian" class="block text-sm font-medium text-gray-700">Berat Pakaian (kg)</label>
+                            <input type="number" name="berat" id="berat" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        </div>
+                        <div class="mt-4 flex justify-end">
+                            <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700" data-modal-toggle="modalProses-<%= item.id %>">Batal</button>
+                            <button type="submit" class="ml-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">Proses</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <% } %>
+<% }) %>
+
+<%- include('footer') %>

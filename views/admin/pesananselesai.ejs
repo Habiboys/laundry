@@ -1,0 +1,55 @@
+<%- include('header') %>
+
+<div class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
+    <div class="container mx-auto px-6 py-8">
+        <h3 class="text-gray-700 text-3xl font-medium mb-4"><%= title %></h3>
+        <div class="mt-4">
+            <div class="flex flex-wrap -mx-6">
+                <div class="w-full px-6 py-4">
+                    <div class="bg-white shadow-lg rounded-lg p-4">
+                        <table class="min-w-full bg-white border border-gray-300">
+                            <thead>
+                                <tr>
+                                    <th class="py-2 px-4 border-b text-gray-700">Order ID</th>
+                                    <th class="py-2 px-4 border-b text-gray-700">Layanan</th>
+                                    <th class="py-2 px-4 border-b text-gray-700">Pelanggan</th>
+                                    <th class="py-2 px-4 border-b text-gray-700">No HP</th>
+                                    <th class="py-2 px-4 border-b text-gray-700">Alamat</th>
+                                    <th class="py-2 px-4 border-b text-gray-700">Berat Pakaian</th>
+                                    <th class="py-2 px-4 border-b text-gray-700">Total harga</th>
+                                    <th class="py-2 px-4 border-b text-gray-700">Status</th>
+                                    <th class="py-2 px-4 border-b text-gray-700">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% order.forEach(item => { %>
+                                    <tr>
+                                        <td class="py-2 px-4 border-b text-gray-700"><%= item.id %></td>
+                                        <td class="py-2 px-4 border-b text-gray-700"><%= item.Layanan.nama %></td>
+                                        <td class="py-2 px-4 border-b text-gray-700"><%= item.User.username %></td>
+                                        <td class="py-2 px-4 border-b text-gray-700"><%= item.User.hp %></td>
+                                        <td class="py-2 px-4 border-b text-gray-700"><%= item.Alamat.alamat %></td>
+                                        <td class="py-2 px-4 border-b text-gray-700"><%= item.berat %> kg</td>
+                                        <td class="py-2 px-4 border-b text-gray-700"><%= item.totalHarga %></td>
+                                        <td class="py-2 px-4 border-b text-gray-700">
+                                            <%= item.status %>
+                                        </td>
+                                        <td class="py-2 px-4 border-b text-gray-700">
+                                            <% if (item.status === 'diantar') { %>
+                                                <form action="/admin/selesai-antar/<%= item.id %>" method="POST" class="inline-block">
+                                                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">Selesai</button>
+                                                </form>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('footer') %>

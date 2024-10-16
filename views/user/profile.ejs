@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/stylesheets/output.css" rel="stylesheet" />
+    <title>Profile - Laundry Web</title>
+</head>
+<body class="bg-gray-100">
+    <%- include('navbar') %>
+
+    <main class="container mx-auto px-4 py-8 mb-12">
+        <div class="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto">
+            <div class="flex items-center mb-6">
+                <img src="/images/man.png" alt="Profile Picture" class="w-20 h-20 rounded-full mr-4 object-cover">
+                <h1 class="text-2xl font-bold text-gray-800">Profil Pengguna</h1>
+            </div>
+            
+            <div class="mb-6">
+                <h2 class="text-lg font-semibold mb-3 text-gray-700 border-b pb-2">Informasi Pribadi</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <p class="font-medium">Username:</p>
+                    <p><%= user.username %></p>
+                    <p class="font-medium">Email:</p>
+                    <p><%= user.email %></p>
+                    <p class="font-medium">No. Telepon:</p>
+                    <p><%= user.hp %></p>
+                </div>
+            </div>
+            
+            <div>
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-lg font-semibold text-gray-700">Alamat</h2>
+                    <a href="/add-address" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded text-sm">
+                        Tambah Alamat
+                    </a>
+                </div>
+                <ul class="space-y-2">
+                    <% address.forEach(function(a) { %>
+                        <li class="flex items-center justify-between bg-gray-50 p-2 rounded">
+                            <span><%= a.alamat %></span>
+                            <button data-modal-target="deleteModal<%= a.id %>" data-modal-toggle="deleteModal<%= a.id %>" class="text-red-500 hover:text-red-600 font-medium text-sm">
+                                Hapus
+                            </button>
+                        </li>
+                        <!-- Delete Confirmation Modal -->
+                        <div id="deleteModal<%= a.id %>" tabindex="-1" class="fixed top-0 left-0 right-0 z-50 hidden p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                            <div class="relative w-full max-w-md max-h-full">
+                                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                    <button type="button" class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="deleteModal<%= a.id %>">
+                                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                        </svg>
+                                        <span class="sr-only">Close modal</span>
+                                    </button>
+                                    <div class="p-6 text-center">
+                                        <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                        </svg>
+                                        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Apakah Anda yakin ingin menghapus alamat ini?</h3>
+                                        <form action="/delete-address/<%= a.id %>" method="POST" class="inline">
+                                            <button type="submit" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
+                                                Ya, saya yakin
+                                            </button>
+                                        </form>
+                                        <button data-modal-hide="deleteModal<%= a.id %>" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Tidak, batal</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </ul>
+            </div>
+        </div>
+    </main >
+
+    <%- include('footer') %>
+
+    <script src="/node_modules/flowbite/dist/flowbite.min.js"></script>
+</body>
+</html>

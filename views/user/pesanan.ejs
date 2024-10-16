@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/stylesheets/output.css" rel="stylesheet" />
+    <title>Status Pesanan - Smart Laundry</title>
+</head>
+<body class="bg-blue-50 text-blue-900 flex flex-col min-h-screen">
+    <%- include('navbar') %>
+
+    <main class="container mx-auto px-4 py-8 flex-grow">
+        <div class="max-w-2xl mx-auto">
+            <h1 class="text-3xl font-bold mb-6 text-center">Status Pesanan</h1>
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                <div class="p-6 md:p-8">
+                    <% if (order.status === 'menunggu') { %>
+                        <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-r-lg">
+                            <p class="font-bold">Berhasil Dipesan</p>
+                            <p>Pesanan Anda sedang diproses.</p>
+                        </div>
+                    <% } else if (order.status === 'dikonfirmasi') { %>
+                        <div class="mb-4 bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-r-lg">
+                            <p class="font-bold">Pesanan Dikonfirmasi</p>
+                            <p>Pesanan Anda sedang menuju ke alamat Anda untuk mengambil pakaian.</p>
+                        </div>
+                    <% } else if (order.status === 'diproses') { %>
+                        <div class="mb-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-r-lg">
+                            <p class="font-bold">Sedang Diproses</p>
+                            <p>Pakaian sedang dalam proses pencucian.</p>
+                        </div>
+                    <% } else if (order.status === 'diantar') { %>
+                        <div class="mb-4 bg-purple-100 border-l-4 border-purple-500 text-purple-700 p-4 rounded-r-lg">
+                            <p class="font-bold">Sedang Diantar</p>
+                            <p>Pakaian telah siap dan sedang menuju ke alamat Anda.</p>
+                        </div>
+                    <% } else if (order.status === 'selesai') { %>
+                        <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-r-lg">
+                            <p class="font-bold">Pesanan Selesai</p>
+                            <p>Terima kasih telah menggunakan layanan kami!</p>
+                        </div>
+                    <% } %>
+
+                    <div class="mt-6">
+                        <h3 class="font-bold text-lg mb-2">Informasi Pesanan:</h3>
+                        <p>Nomor Pesanan : <%= order.id %></p>
+                        <p>Waktu Pesanan : <%= formattedDate %></p>
+                        <p>Layanan       : <%= order.Layanan.nama %></p>
+                        <p>Alamat        : <%= order.Alamat.alamat %></p>
+                        <% if (order.status !== 'menunggu' && 'dikonfirmasi') { %>
+                            <p>Berat Pakaian : <%= order.berat %> kg</p>
+                            <p>Harga         : Rp <%= order.harga %></p>
+                            <p>Ongkos Kirim  : Rp <%= order.ongkir %></p>
+                            <p class="font-bold">Total Harga : Rp <%= order.totalHarga %></p>
+                        <% } %>
+                    </div>
+
+                    <% if (order.status === 'selesai') { %>
+                        <a href="/layanan/<%= order.layananId %>" class="text-center w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-300 mb-4 mt-4 inline-block">
+                            Pesan Lagi
+                        </a>
+                    <% } %>
+
+                    <% if (order.status === 'menunggu') { %>
+                        <a href="/pesanan/batalkan/<%= order.id %>" class="text-center w-full bg-red-600 text-white font-bold py-2 px-4 rounded hover:bg-red-700 transition duration-300 mb-4 mt-4 inline-block">
+                            Batalkan Pesanan
+                        </a>
+                    <% } %>
+
+                    <% if (order.status === 'diproses') { %>
+                        <form action="/bayar/<%= order.id %>" method="POST">
+                        <button type="submit" class="text-center w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-300 mb-4 mt-4 inline-block">
+                            Lakukan Pembayaran
+                        </button>
+                    </form>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('footer') %>
+</body>
+</html>

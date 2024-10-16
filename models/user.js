@@ -7,6 +7,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // User.hasOne(models.Lecturer, { foreignKey: "userId" });
       // User.hasOne(models.Student, { foreignKey: "userId" });
+      User.hasMany(models.Alamat, { onDelete: "CASCADE", foreignKey: 'userId'});
+      User.hasMany(models.Pemesanan, { onDelete: "CASCADE", foreignKey: 'userId'});
     }
   }
   User.init(

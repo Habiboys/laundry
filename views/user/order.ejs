@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/stylesheets/output.css" rel="stylesheet" />
+    <title>Pesan Layanan - Smart Laundry</title>
+</head>
+<body class="bg-blue-50 text-blue-900 flex flex-col min-h-screen">
+    <%- include('navbar') %>
+
+    <section class="container mx-auto px-4 py-12">
+        <div class="max-w-2xl mx-auto">
+            <h2 class="text-3xl font-bold mb-6 text-center">Pesan Layanan</h2>
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                <div class="p-6 md:p-8">
+                    <form action="/pesan" method="POST" id="orderForm">
+                        <input type="hidden" name="layananId" value="<%= layanan.id %>">
+                        <div class="mb-6">
+                            <h3 class="text-xl font-semibold mb-2 text-blue-800">Detail Layanan</h3>
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <p class="text-lg font-bold text-blue-600 mb-2"><%= layanan.nama %></p>
+                                <p class="text-sm text-gray-600 mb-2"><%= layanan.deskripsi %></p>
+                                <p class="text-lg font-bold text-blue-800">Harga per kg: Rp <%= layanan.harga %></p>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <label for="alamat" class="block mb-2 text-sm font-medium text-gray-900">Pilih Alamat</label>
+                            <select name="alamatId" id="alamat" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                <% address.forEach(alamat => { %>
+                                <option value="<%= alamat.id %>"><%= alamat.alamat %></option>
+                                <% }) %>
+                            </select>
+                            <a href="/add-address" class="text-blue-600 text-sm mt-2 inline-block hover:underline">Tambah Alamat Baru</a>
+                        </div>
+                        <div class="mb-6">
+                            <p class="text-lg font-bold text-blue-800">Ongkos Kirim: Rp <span id="ongkir">0</span></p>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300">Pesan Sekarang</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <%- include('footer') %>
+    <script src="/node_modules/flowbite/dist/flowbite.min.js"></script>
+    <script>
+        document.getElementById('alamat').addEventListener('change', async function () {
+            const alamatId = this.value;
+            const response = await fetch('/calculate-ongkir', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ alamatId })
+            });
+            const data = await response.json();
+            document.getElementById('ongkir').textContent = data.deliveryFee;
+        });
+
+        // Trigger change event on page load to calculate initial delivery fee
+        document.getElementById('alamat').dispatchEvent(new Event('change'));
+    </script>
+</body>
+</html>
